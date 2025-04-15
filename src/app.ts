@@ -53,6 +53,32 @@ function autobind(
         }
     };
     return adjDescriptor;
+};
+
+class ProjectList{
+    templateElement : HTMLTemplateElement;
+    hostElement : HTMLDivElement;
+    element : HTMLElement;
+    constructor(private type:'active'|'finished'){
+        this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
+        this.hostElement = document.getElementById('app')! as HTMLDivElement
+
+        const importNode = document.importNode(this.templateElement.content, true);
+        this.element = importNode.firstElementChild as HTMLFormElement;
+        this.element.id= `${this.type} - projects`;
+        this.attach(); 
+        this.renderContent();
+    }
+
+    private renderContent(){
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul')!.id=listId;
+        this.element.querySelector('h2')!.textContent = this.type.toLocaleUpperCase()+' PROJECTS';
+
+    }
+    private attach(){
+        this.hostElement.insertAdjacentElement('beforeend', this.element);
+    }
 }
 
 class ProjectInput{
@@ -118,6 +144,7 @@ class ProjectInput{
         const userInput = this.gatherUserInput()
         if(Array.isArray(userInput)){
             const [title, desc,people]=userInput;
+
             console.log(title, desc,people);  
             this.clearInput()
         }
@@ -135,3 +162,5 @@ class ProjectInput{
 }
 
 const projectContent = new ProjectInput();
+const activePrjList = new ProjectList('active');
+const finishedPrjList = new ProjectList('finished');
